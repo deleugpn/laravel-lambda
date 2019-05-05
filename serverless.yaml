@@ -53,15 +53,14 @@ Resources:
                   - 'logs:*'
                 Resource: 'arn:aws:logs:*:*:*'
 
-        - PolicyName: LambdaPermissions
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                   # Necessary when putting Lambda inside VPC in order to provision ENI
+#        - PolicyName: LambdaPermissions
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Effect: Allow
+#                Action:
 #                  - ec2:CreateNetworkInterface
 #                  - ec2:DescribeNetworkInterfaces
 #                  - ec2:DeleteNetworkInterface
-                Resource:
-                  - '*'
+#                Resource:
+#                  - '*'
