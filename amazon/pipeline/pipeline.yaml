@@ -1,0 +1,244 @@
+Description: CodePipeline for Laravel Lambda project
+
+Parameters:
+  GitHubBranchName:
+    Type: String
+
+  GitHubOAuthToken:
+    Type: String
+    NoEcho: true
+
+  ApplicationKey:
+    Type: String
+    NoEcho: true
+
+Resources:
+
+  SourceCodeStorage:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 7
+            Status: Enabled
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildServicePermissions
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:ListObjects
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                Resource:
+                  - !GetAtt SourceCodeStorage.Arn
+                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, /*]
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+  CodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: amazon/pipeline/buildspec.build.yaml
+      TimeoutInMinutes: 15
+
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodePipelinePermissions
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                  - s3:PutObject
+                Resource:
+                  - !GetAtt SourceCodeStorage.Arn
+                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, /*]
+              - Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                Resource:
+                  - !GetAtt CodeBuild.Arn
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:SetStackPolicy
+                  - cloudformation:ValidateTemplate
+                  - iam:PassRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource:
+                  - '*'
+
+  CloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: cloudformation.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFormationPermissions
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                  - codedeploy:*
+                  - lambda:*
+                  - cloudformation:CreateChangeSet
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:PutRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PassRole
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                Resource:
+                  - '*'
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Location: !Ref SourceCodeStorage
+        Type: S3
+      Name: laravel-lambda
+      RestartExecutionOnUpdate: false
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: source
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              Configuration:
+                Owner: deleugpn
+                Repo: laravel-lambda
+                Branch: !Ref GitHubBranchName
+                OAuthToken: !Ref GitHubOAuthToken
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: src
+
+        - Name: Build
+          Actions:
+            - Name: CodeBuild
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref CodeBuild
+                PrimarySource: src
+              InputArtifacts:
+                - Name: src
+              OutputArtifacts:
+                - Name: package
+
+        - Name: Deploy
+          Actions:
+            - Name: Transform
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: package
+              OutputArtifacts: []
+              Configuration:
+                StackName: laravel-lambda
+                ActionMode: CHANGE_SET_REPLACE
+                RoleArn: !GetAtt CloudFormationRole.Arn
+                ChangeSetName: pipeline-changeset
+                Capabilities: CAPABILITY_IAM
+                TemplatePath: package::lambda.yaml
+                ParameterOverrides: !Sub |
+                  {
+                    "ApplicationKey": "${ApplicationKey}",
+                  }
+              RunOrder: 1
+
+            - Name: Execute
+              InputArtifacts: []
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              OutputArtifacts: []
+              Configuration:
+                StackName: laravel-lambda
+                ActionMode: CHANGE_SET_EXECUTE
+                ChangeSetName: pipeline-changeset
+              RunOrder: 2
+
+  GithubWebhook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: !Ref GitHubOAuthToken
+      RegisterWithThirdParty: 'true'
+      Filters:
+        - JsonPath: "$.ref"
+          MatchEquals: refs/heads/{Branch}
+      TargetPipeline: !Ref CodePipeline
+      TargetAction: source
+      TargetPipelineVersion: !GetAtt CodePipeline.Version

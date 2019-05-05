@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - docker run --name laravel-app -v $(pwd):/app -w /app -t breftest/php:73 sh -c "php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\" && php composer-setup.php && php composer.phar install && /app/vendor/bin/phpunit"
+      - docker cp laravel-app:/app/vendor ./vendor
+#      - aws cloudformation package --template-file ./serverless.yaml --s3-bucket ${S3_BUCKET} --output-template-file lambda.yaml
+
+artifacts:
+  files:
+    - lambda.yaml
