@@ -45,7 +45,7 @@ Resources:
                   - s3:PutObject
                 Resource:
                   - !GetAtt SourceCodeStorage.Arn
-                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, /*]
+                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, '/*']]
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
@@ -67,7 +67,7 @@ Resources:
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
         Type: CODEPIPELINE
-        BuildSpec: amazon/pipeline/buildspec.build.yaml
+        BuildSpec: amazon/pipeline/buildspec.yaml
       TimeoutInMinutes: 15
 
   CodePipelineRole:
@@ -91,7 +91,7 @@ Resources:
                   - s3:PutObject
                 Resource:
                   - !GetAtt SourceCodeStorage.Arn
-                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, /*]
+                  - !Join ['', [!GetAtt SourceCodeStorage.Arn, '/*']]
               - Effect: Allow
                 Action:
                   - codebuild:BatchGetBuilds
@@ -229,16 +229,16 @@ Resources:
                 ChangeSetName: pipeline-changeset
               RunOrder: 2
 
-  GithubWebhook:
-    Type: AWS::CodePipeline::Webhook
-    Properties:
-      Authentication: GITHUB_HMAC
-      AuthenticationConfiguration:
-        SecretToken: !Ref GitHubOAuthToken
-      RegisterWithThirdParty: 'true'
-      Filters:
-        - JsonPath: "$.ref"
-          MatchEquals: refs/heads/{Branch}
-      TargetPipeline: !Ref CodePipeline
-      TargetAction: source
-      TargetPipelineVersion: !GetAtt CodePipeline.Version
+#  GithubWebhook:
+#    Type: AWS::CodePipeline::Webhook
+#    Properties:
+#      Authentication: GITHUB_HMAC
+#      AuthenticationConfiguration:
+#        SecretToken: !Ref GitHubOAuthToken
+#      RegisterWithThirdParty: 'true'
+#      Filters:
+#        - JsonPath: "$.ref"
+#          MatchEquals: refs/heads/{Branch}
+#      TargetPipeline: !Ref CodePipeline
+#      TargetAction: source
+#      TargetPipelineVersion: !GetAtt CodePipeline.Version
