@@ -146,8 +146,7 @@ Resources:
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
                   - iam:PassRole
-                  - s3:GetObjectVersion
-                  - s3:GetBucketVersioning
+                  - s3:Get*
                 Resource:
                   - '*'
 
