@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  ApplicationKey:
+    Type: String
+    NoEcho: true
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        APP_SERVICES_CACHE: '/tmp/cache/services.php'
+        APP_PACKAGES_CACHE: '/tmp/cache/packages.php'
+        APP_ROUTES_CACHE: '/tmp/cache/routes.php'
+
+        APP_STORAGE: '/tmp'
+        APP_KEY: !Ref ApplicationKey
+        APP_DEBUG: 'true'
+
+        LOG_CHANNEL: stderr
+
+Resources:
+  Application:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt LambdaExecutionRole.Arn
+      CodeUri: .
+      Handler: public/index.php
+      Timeout: 30
+      MemorySize: 1024
+      Runtime: provided
+      Layers:
+        - arn:aws:lambda:eu-west-1:209497400698:layer:php-73-fpm:6
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaLogPermission
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:*'
+                Resource: 'arn:aws:logs:*:*:*'
+
+        - PolicyName: LambdaPermissions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                   # Necessary when putting Lambda inside VPC in order to provision ENI
+#                  - ec2:CreateNetworkInterface
+#                  - ec2:DescribeNetworkInterfaces
+#                  - ec2:DeleteNetworkInterface
+                Resource:
+                  - '*'

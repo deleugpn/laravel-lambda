@@ -61,6 +61,9 @@ Resources:
         Type: CODEPIPELINE
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: BUCKET
+            Value: !Ref SourceCodeStorage
         Image: aws/codebuild/docker:18.09.0
         PrivilegedMode: true
         Type: LINUX_CONTAINER
