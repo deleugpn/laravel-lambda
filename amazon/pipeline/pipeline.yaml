@@ -214,8 +214,8 @@ Resources:
                 TemplatePath: package::lambda.yaml
                 ParameterOverrides: !Sub |
                   {
-                    "ApplicationKey": "${ApplicationKey}",
-                  }
+                    "ApplicationKey": "${ApplicationKey}"
+                   }
               RunOrder: 1
 
             - Name: Execute
