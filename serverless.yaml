@@ -103,6 +103,7 @@ Resources:
                   - sqs:GetQueueAttributes
                   - sqs:GetQueueUrl
                   - sqs:ReceiveMessage
+                  - sqs:SendMessage
                 Resource:
                   - !ImportValue LaravelLambdaQueueArn
 
