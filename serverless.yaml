@@ -32,6 +32,17 @@ Resources:
       Runtime: provided
       Layers:
         - arn:aws:lambda:eu-west-1:209497400698:layer:php-73-fpm:6
+      Events:
+        HttpRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+        HttpSubPaths:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -64,3 +75,10 @@ Resources:
 #                  - ec2:DeleteNetworkInterface
 #                Resource:
 #                  - '*'
+
+Outputs:
+  LaravelLambdaGatewayName:
+    Description: Name of the Laravel Lambda Gateway
+    Value: !Ref ServerlessRestApi
+    Export:
+      Name: LaravelLambdaGatewayName

@@ -1,0 +1,28 @@
+Description: Laravel Lambda Domain
+
+Resources:
+  ApiGatewayDomain:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      EndpointConfiguration:
+        Types: [REGIONAL]
+      RegionalCertificateArn: !ImportValue DeleuCertificate
+      DomainName: !ImportValue DeleuZone
+
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref ApiGatewayDomain
+      RestApiId: !ImportValue LaravelLambdaGatewayName
+      Stage: Prod
+
+  DomainNameServer:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !ImportValue DeleuHostedZone
+      RecordSets:
+        - Name: !ImportValue DeleuZone
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt ApiGatewayDomain.RegionalDomainName
+            HostedZoneId: !GetAtt ApiGatewayDomain.RegionalHostedZoneId

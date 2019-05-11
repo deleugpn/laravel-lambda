@@ -1,0 +1,37 @@
+Resources:
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: lambda.deleu.dev
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: lambda.deleu.dev
+      SubjectAlternativeNames: ['*.lambda.deleu.dev']
+      DomainValidationOptions:
+        - DomainName: lambda.deleu.dev
+          ValidationDomain: lambda.deleu.dev
+        - DomainName: '*.lambda.deleu.dev'
+          ValidationDomain: lambda.deleu.dev
+      ValidationMethod: DNS
+
+Outputs:
+
+  HostedZone:
+    Description: Hosted Zone for the Account
+    Value: !Ref HostedZone
+    Export:
+      Name: DeleuHostedZone
+
+  Zone:
+    Description: DNS Zone to be used when creating a new domain
+    Value: lambda.deleu.dev
+    Export:
+      Name: DeleuZone
+
+#  Certificate:
+#    Description: Wildcard certificate for Account DNS Zone.
+#    Value: !Ref Certificate
+#    Export:
+#      Name: Certificate

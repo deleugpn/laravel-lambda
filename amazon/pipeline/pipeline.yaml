@@ -231,6 +231,21 @@ Resources:
                 ChangeSetName: pipeline-changeset
               RunOrder: 2
 
+            - Name: Domain
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                RoleArn: !GetAtt CloudFormationRole.Arn
+                StackName: laravel-lambda-domain
+                TemplatePath: src::amazon/infrastructure/domain.yaml
+              InputArtifacts:
+                - Name: src
+              RunOrder: 3
+
 #  GithubWebhook:
 #    Type: AWS::CodePipeline::Webhook
 #    Properties:
