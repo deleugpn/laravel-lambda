@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Components\Bref\FakeLambda;
 use App\Components\Queue\LambdaWorkCommand;
-use Facades\App\Components\Bref\Bref;
+use App\Components\Bref\Bref;
 use Tests\TestCase;
 
 class LambdaWorkTest extends TestCase
