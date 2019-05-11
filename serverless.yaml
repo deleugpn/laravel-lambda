@@ -13,6 +13,7 @@ Globals:
         APP_SERVICES_CACHE: /tmp/cache/services.php
         APP_PACKAGES_CACHE: /tmp/cache/packages.php
         APP_ROUTES_CACHE: /tmp/cache/routes.php
+        VIEW_COMPILED_PATH: /tmp/storage/framework/views
 
         APP_STORAGE: /tmp
         APP_KEY: !Ref ApplicationKey

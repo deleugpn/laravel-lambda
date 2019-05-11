@@ -23,8 +23,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (! is_dir($dir = $this->app->storagePath() . '/framework/views')) {
-            mkdir($dir, 0755, true);
+        $this->blade();
+    }
+
+    private function blade(): void
+    {
+        $path = $this->app['config']->get('view.compiled');
+
+        if (! is_dir($path)) {
+            mkdir($path, 0755, true);
         }
     }
 }
