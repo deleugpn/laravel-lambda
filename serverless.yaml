@@ -10,13 +10,14 @@ Globals:
   Function:
     Environment:
       Variables:
-        APP_SERVICES_CACHE: '/tmp/cache/services.php'
-        APP_PACKAGES_CACHE: '/tmp/cache/packages.php'
-        APP_ROUTES_CACHE: '/tmp/cache/routes.php'
+        APP_SERVICES_CACHE: /tmp/cache/services.php
+        APP_PACKAGES_CACHE: /tmp/cache/packages.php
+        APP_ROUTES_CACHE: /tmp/cache/routes.php
 
-        APP_STORAGE: '/tmp'
+        APP_STORAGE: /tmp
         APP_KEY: !Ref ApplicationKey
         APP_DEBUG: 'true'
+        SESSION_DRIVER: array
 
         LOG_CHANNEL: stderr
 
