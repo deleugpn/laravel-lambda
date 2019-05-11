@@ -30,8 +30,8 @@ Outputs:
     Export:
       Name: DeleuZone
 
-#  Certificate:
-#    Description: Wildcard certificate for Account DNS Zone.
-#    Value: !Ref Certificate
-#    Export:
-#      Name: Certificate
+  Certificate:
+    Description: Wildcard certificate for Account DNS Zone.
+    Value: !Ref Certificate
+    Export:
+      Name: DeleuCertificate

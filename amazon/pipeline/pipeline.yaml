@@ -140,12 +140,16 @@ Resources:
                   - cloudformation:CreateChangeSet
                   - iam:GetRole
                   - iam:CreateRole
+                  - iam:CreateServiceLinkedRole
                   - iam:DeleteRole
                   - iam:PutRolePolicy
                   - iam:AttachRolePolicy
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
                   - iam:PassRole
+                  - route53:Get*
+                  - route53:ListResourceRecordSets
+                  - route53:ChangeResourceRecordSets
                   - s3:Get*
                 Resource:
                   - '*'

@@ -9,6 +9,10 @@
 
 define('LARAVEL_START', microtime(true));
 
+if (! is_dir($dir = dirname($_ENV['APP_SERVICES_CACHE']))) {
+    mkdir($dir, 0755, true);
+}
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
