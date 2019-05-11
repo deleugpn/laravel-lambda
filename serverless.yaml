@@ -20,6 +20,10 @@ Globals:
         APP_DEBUG: 'true'
         SESSION_DRIVER: array
 
+        QUEUE_CONNECTION: sqs
+        SQS_QUEUE: !ImportValue LaravelLambdaQueue
+        SQS_REGION: !Ref AWS::Region
+
         LOG_CHANNEL: stderr
 
 Resources:
@@ -30,7 +34,7 @@ Resources:
       CodeUri: .
       Handler: public/index.php
       Timeout: 30
-      MemorySize: 1024
+      MemorySize: 512
       Runtime: provided
       Layers:
         - arn:aws:lambda:eu-west-1:209497400698:layer:php-73-fpm:6
@@ -45,6 +49,28 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: ANY
+
+  Worker:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt LambdaExecutionRole.Arn
+      CodeUri: .
+      Handler: artisan
+      Timeout: 300
+      MemorySize: 512
+      Environment:
+        Variables:
+          ARTISAN_COMMAND: 'queue:lambda'
+      Layers:
+        - arn:aws:lambda:eu-west-1:209497400698:layer:php-73:6
+      Runtime: provided
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !ImportValue LaravelLambdaQueueArn
+            BatchSize: 1
+
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -65,6 +91,20 @@ Resources:
                 Action:
                   - 'logs:*'
                 Resource: 'arn:aws:logs:*:*:*'
+
+        - PolicyName: LambdaQueuePermissions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ChangeMessageVisibility
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ReceiveMessage
+                Resource:
+                  - !ImportValue LaravelLambdaQueueArn
 
 #        - PolicyName: LambdaPermissions
 #          PolicyDocument:

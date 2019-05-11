@@ -32,8 +32,10 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
+$command = $_ENV['ARTISAN_COMMAND'];
+
 $status = $kernel->handle(
-    $input = new Symfony\Component\Console\Input\ArgvInput,
+    $input = new Symfony\Component\Console\Input\ArgvInput($command ? ['lambda', $command] : null),
     new Symfony\Component\Console\Output\ConsoleOutput
 );
 

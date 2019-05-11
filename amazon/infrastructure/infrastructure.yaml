@@ -1,0 +1,30 @@
+Description: Laravel Lambda Infrastructure
+
+Resources:
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 600
+      MessageRetentionPeriod: 86400
+      ReceiveMessageWaitTimeSeconds: 30
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt [DeadLetterQueue, Arn]
+        maxReceiveCount: 3
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 172800
+
+Outputs:
+  LaravelLambdaQueue:
+    Description: Laravel Lambda SQS Queue
+    Value: !Ref Queue
+    Export:
+      Name: LaravelLambdaQueue
+
+  LaravelLambdaQueueArn:
+    Description: Laravel Lambda SQS Queue ARN
+    Value: !GetAtt Queue.Arn
+    Export:
+      Name: LaravelLambdaQueueArn
