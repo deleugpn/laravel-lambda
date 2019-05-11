@@ -81,17 +81,20 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Laravel Lambda
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="https://laravel.com/docs">Laravel</a>
+                    <a href="https://bref.sh">Bref</a>
+                    <a href="https://aws.amazon.com/lambda/">Lambda</a>
+                    <a href="https://aws.amazon.com/cloudformation/">CloudFormation</a>
+                    <a href="https://aws.amazon.com/sqs/">SQS</a>
+                    <a href="https://github.com/deleugpn/laravel-lambda">Source</a>
+                </div>
+                
+                <div class="links">
+                    Sponsored by <a href="https://customergauge.com">CustomerGauge</a>
                 </div>
             </div>
         </div>
