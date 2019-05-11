@@ -54,7 +54,7 @@ return [
             'key' => null,
             'secret' => null,
             'queue' => env('SQS_QUEUE'),
-            'region' => env('AWS_REGION'),
+            'region' => env('SQS_REGION'),
         ],
 
         'redis' => [
