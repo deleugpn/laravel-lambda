@@ -6,7 +6,7 @@ Resources:
     Properties:
       VisibilityTimeout: 600
       MessageRetentionPeriod: 86400
-      ReceiveMessageWaitTimeSeconds: 30
+      ReceiveMessageWaitTimeSeconds: 20
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt [DeadLetterQueue, Arn]
         maxReceiveCount: 3

@@ -154,6 +154,7 @@ Resources:
                   - sqs:CreateQueue
                   - sqs:DeleteQueue
                   - sqs:ListQueues
+                  - sqs:GetQueueAttributes
                 Resource:
                   - '*'
 
