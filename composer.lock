@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58aa22c687923263403f00c13ddb32ad",
+    "content-hash": "38f6cfdba4035745b0c5c4f11f126ea2",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.93.3",
+            "version": "3.93.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "874c1040edab52df3873157aa54ea51833d48c0e"
+                "reference": "41fe205dae433d5cd7a48a4117d37a43a44ed0d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/874c1040edab52df3873157aa54ea51833d48c0e",
-                "reference": "874c1040edab52df3873157aa54ea51833d48c0e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/41fe205dae433d5cd7a48a4117d37a43a44ed0d2",
+                "reference": "41fe205dae433d5cd7a48a4117d37a43a44ed0d2",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2019-05-03T18:07:06+00:00"
+            "time": "2019-05-10T18:13:26+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -5075,7 +5075,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.1.3"
+        "php": "^7.1.3",
+        "ext-json": "*"
     },
     "platform-dev": []
 }
