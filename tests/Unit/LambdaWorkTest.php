@@ -11,6 +11,8 @@ class LambdaWorkTest extends TestCase
 {
     public function test_queue_lambda_will_work_messages_from_lambda_trigger()
     {
+        $this->markTestIncomplete();
+
         $this->mockLambdaEvent();
 
         $this->expectException(MyException::class);

@@ -3,10 +3,11 @@
 namespace App\Components\Queue;
 
 use App\Components\Bref\Bref;
+use Illuminate\Console\Command;
 use Illuminate\Log\Logger;
 use Illuminate\Queue\Console\WorkCommand;
 
-class LambdaWorkCommand extends WorkCommand
+class LambdaWorkCommand extends Command
 {
     protected $signature = 'queue:lambda
                             {connection? : The name of the queue connection to work}
