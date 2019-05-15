@@ -3,6 +3,7 @@
 namespace App\Components\Queue;
 
 use App\Components\Bref\Bref;
+use Illuminate\Log\Logger;
 use Illuminate\Queue\Console\WorkCommand;
 
 class LambdaWorkCommand extends WorkCommand
@@ -29,5 +30,14 @@ class LambdaWorkCommand extends WorkCommand
 
             $this->worker->process('lambda', $job, $this->gatherWorkerOptions());
         });
+    }
+
+    public function handle(Logger $logger)
+    {
+        echo 'This is echo';
+
+        $logger->info('this is info from log');
+
+        dump($_SERVER['argv']);
     }
 }
