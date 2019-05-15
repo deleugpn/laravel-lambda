@@ -35,10 +35,8 @@ class LambdaWorkCommand extends Command
 
     public function handle(Logger $logger)
     {
-        echo 'This is echo';
-
-        $logger->info('this is info from log');
-
-        dump($_SERVER['argv']);
+        lambda(function ($event) {
+            dump($event);
+        });
     }
 }
